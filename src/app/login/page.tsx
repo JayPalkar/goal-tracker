@@ -1,41 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import React, { useState } from "react";
+import styles from "../page.module.css";
+import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/utils/appConstants";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import styles from "./page.module.css";
 
-const Page = () => {
-  const [name, setName] = useState("");
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const router = useRouter();
 
-  const handleSignup = async () => {
+  const handleLogin = async () => {
     try {
-      await axios.post(`${BASE_URL}auth/register`, {
-        name,
+      const response = await axios.post(`${BASE_URL}auth/login`, {
         email,
         password,
       });
-      router.push("/login");
+      localStorage.setItem("token", response.data.token);
+      router.push("/goals");
     } catch (error: any) {
       console.log(error.message);
     }
   };
+
   return (
-    <section className={styles.authSection} id="goalTrackerContainer">
-      <h1 className={styles.authHeader}>Goal Tacker - Signup</h1>
+    <section className={styles.authSection}>
+      <h1 className={styles.authHeader}>Goal Tacker - Login</h1>
       <form className={styles.formContainer}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Enter Your Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
         <input
           type="email"
           name="email"
@@ -56,13 +49,13 @@ const Page = () => {
         <button
           className={styles.registerButton}
           type="button"
-          onClick={handleSignup}
+          onClick={handleLogin}
         >
-          Register
+          Login
         </button>
       </form>
     </section>
   );
 };
 
-export default Page;
+export default Login;
